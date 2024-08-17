@@ -86,10 +86,6 @@ void AKnowledgeGraph::AddNode(int32 id, AKnowledgeNode* kn, FVector location)
 		all_nodes.Emplace(id, kn);
 
 
-
-
-
-		
 		FOctreeElement ote;
 
 		ote.MyActor = kn;
@@ -108,8 +104,13 @@ void AKnowledgeGraph::AddOctreeElement(const FOctreeElement& inNewOctreeElement)
 
 void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 {
-	UObject* SpawnClass = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL,
-	                                                     TEXT("Blueprint'/Game/cylinder.cylinder'")));
+	UObject* SpawnClass = Cast<UObject>(
+		StaticLoadObject(UObject::StaticClass(),
+		                 NULL,
+		                 TEXT("Blueprint'/Game/cylinder.cylinder'")
+		)
+	);
+	
 	UBlueprint* GeneratedObj = Cast<UBlueprint>(SpawnClass);
 
 
