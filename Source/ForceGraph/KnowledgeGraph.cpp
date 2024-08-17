@@ -28,8 +28,8 @@ void AKnowledgeGraph::BeginPlay()
 	Super::BeginPlay();
 
 
-	// UE_LOG(LogTemp, Warning, TEXT("restricting tech interval.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
-	// PrimaryActorTick.TickInterval = 2.5f;
+	UE_LOG(LogTemp, Warning, TEXT("restricting tech interval.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	PrimaryActorTick.TickInterval = 2.5f;
 
 
 	InitOctree(FBox(FVector(-200, -200, -200), FVector(200, 200, 200)));
@@ -190,6 +190,10 @@ void AKnowledgeGraph::RemoveElement(int key)
 
 void AKnowledgeGraph::ApplyForces()
 {
+
+	// In here velocity of all notes are zeroed
+	// In the following for loop, In the first few loop, the velocity is 0. 
+
 	//link forces
 	for (auto& link : all_links)
 	{
@@ -202,6 +206,9 @@ void AKnowledgeGraph::ApplyForces()
 		FVector target_pos = target_node->GetActorLocation();
 		FVector target_velocity = target_node->velocity;
 
+		UE_LOG(LogTemp, Warning, TEXT("source VELOCITY1: %s"), *source_velocity.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("target VELOCITY1: %s"), *target_velocity.ToString());
+		
 		FVector new_v = target_pos + target_velocity - source_pos - source_velocity;
 		float l = new_v.Size();
 		l = (l - link.Value->distance) / l * alpha * link.Value->strength;
