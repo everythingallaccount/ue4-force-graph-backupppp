@@ -33,6 +33,8 @@ void AKnowledgeGraph::BeginPlay()
 	InitOctree(FBox(FVector(-200, -200, -200), FVector(200, 200, 200)));
 
 
+
+	
 	//json crap
 	const FString JsonFilePath = FPaths::ProjectContentDir() + "/data/graph.json";
 	FString JsonString; //Json converted to FString
@@ -48,9 +50,15 @@ void AKnowledgeGraph::BeginPlay()
 		TArray<TSharedPtr<FJsonValue>> jnodes = JsonObject->GetArrayField("nodes");
 		for (int32 i = 0; i < jnodes.Num(); i++)
 		{
+
 			auto jobj = jnodes[i]->AsObject();
+
+			
 			int jid = jobj->GetIntegerField("id");
+
 			AKnowledgeNode* kn = GetWorld()->SpawnActor<AKnowledgeNode>();
+
+
 			AddNode(jid, kn, FVector(0, 0, 0));
 		}
 
@@ -71,12 +79,21 @@ void AKnowledgeGraph::AddNode(int32 id, AKnowledgeNode* kn, FVector location)
 {
 	if (!all_nodes.Contains(id))
 	{
+
 		kn->id = id;
+
 		kn->strength = nodeStrength;
+
+
 		all_nodes.Emplace(id, kn);
+
+		
 		FOctreeElement ote;
+		
 		ote.MyActor = kn;
+
 		ote.strength = 1.0; // update with strength
+
 		ote.BoxSphereBounds = FBoxSphereBounds(location, FVector(1.0f, 1.0f, 1.0f), 1.0f);
 		AddOctreeElement(ote);
 	}

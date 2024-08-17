@@ -28,8 +28,11 @@ struct NodeStrength
 struct FOctreeElement
 {
 	AKnowledgeNode* MyActor;
+	
 	float strength = 0.0;
+
 	FBoxSphereBounds BoxSphereBounds;
+
 	int id;
 
 	FOctreeElement()
