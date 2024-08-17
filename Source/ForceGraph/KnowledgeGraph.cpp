@@ -289,7 +289,11 @@ NodeStrength AKnowledgeGraph::AddUpChildren(const FSimpleOctree::FNode& node, FS
 //get weights for every node before applying
 void AKnowledgeGraph::Accumulate()
 {
-	for (FSimpleOctree::TConstIterator<> NodeIt(*OctreeData); NodeIt.HasPendingNodes(); NodeIt.Advance())
+	for (
+		FSimpleOctree::TConstIterator<> NodeIt(*OctreeData);
+		NodeIt.HasPendingNodes();
+		NodeIt.Advance()
+		)
 	{
 		const FSimpleOctree::FNode& CurrentNode = NodeIt.GetCurrentNode();
 		AddUpChildren(CurrentNode, "0");
