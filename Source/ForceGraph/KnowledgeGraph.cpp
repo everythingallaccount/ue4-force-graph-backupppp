@@ -35,7 +35,6 @@ void AKnowledgeGraph::BeginPlay()
 
 
 	
-	UE_LOG(LogTemp, Warning, TEXT("HELLO WORLD!@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
 
 
 	InitOctree(FBox(FVector(-200, -200, -200), FVector(200, 200, 200)));
@@ -92,6 +91,12 @@ void AKnowledgeGraph::AddNode(int32 id, AKnowledgeNode* kn, FVector location)
 		all_nodes.Emplace(id, kn);
 
 
+
+
+
+
+
+		
 		FOctreeElement ote;
 
 		ote.MyActor = kn;
@@ -393,7 +398,8 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	
-	
+	UE_LOG(LogTemp, Warning, TEXT("HELLO WORLD!@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+
 
 	// FPlatformProcess::Sleep(3.0f);
 	
@@ -401,9 +407,11 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	if (!init)
 	{
 		InitNodes();
+
+		
 		InitForces();
 	}
-
+	
 	if (alpha < alphaMin)
 		return;
 
