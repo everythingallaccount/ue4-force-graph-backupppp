@@ -397,7 +397,17 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	
 	Super::Tick(DeltaTime);
 
+
+	iterations += 1;
+
+
+	if (iterations > 10000000)
+	{
+		return;
+	}
 	
+	
+
 	UE_LOG(LogTemp, Warning, TEXT("HELLO WORLD!@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
 
 
@@ -414,6 +424,7 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	
 	if (alpha < alphaMin)
 		return;
+	
 
 	
 	alpha += (alphaTarget - alpha) * alphaDecay; //need to restart this if want to keep moving
