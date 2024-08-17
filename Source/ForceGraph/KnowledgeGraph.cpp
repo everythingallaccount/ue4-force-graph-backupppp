@@ -232,7 +232,10 @@ void AKnowledgeGraph::ApplyForces()
 	}
 }
 
-NodeStrength AKnowledgeGraph::AddUpChildren(const FSimpleOctree::FNode& node, FString node_id)
+NodeStrength AKnowledgeGraph::AddUpChildren(
+	const FSimpleOctree::FNode& node,
+	FString node_id
+)
 {
 	if (!octree_node_strengths.Contains(node_id))
 	{
@@ -293,7 +296,7 @@ void AKnowledgeGraph::Accumulate()
 		FSimpleOctree::TConstIterator<> NodeIt(*OctreeData);
 		NodeIt.HasPendingNodes();
 		NodeIt.Advance()
-		)
+	)
 	{
 		const FSimpleOctree::FNode& CurrentNode = NodeIt.GetCurrentNode();
 		AddUpChildren(CurrentNode, "0");
