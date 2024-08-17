@@ -133,6 +133,8 @@ void AKnowledgeGraph::InitNodes()
 		float radius = initialRadius * sqrt(node.Key);
 		float angle = node.Key * initialAngle;
 		FVector init_pos = FVector(cos(angle), sin(angle), tan(angle)) * radius;
+
+		// Remember that the note value stored the actual object. 
 		node.Value->SetActorLocation(init_pos, false);
 		//        print("init position");
 		//        print(node.Value->GetActorLocation().ToString());
