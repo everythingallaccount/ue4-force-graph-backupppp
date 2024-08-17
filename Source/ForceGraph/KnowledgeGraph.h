@@ -28,7 +28,7 @@ struct NodeStrength
 struct FOctreeElement
 {
 	AKnowledgeNode* MyActor;
-	
+
 	float strength = 0.0;
 
 	FBoxSphereBounds BoxSphereBounds;
@@ -38,7 +38,11 @@ struct FOctreeElement
 	FOctreeElement()
 	{
 		MyActor = nullptr;
-		BoxSphereBounds = FBoxSphereBounds(FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f), 1.0f);
+		BoxSphereBounds = FBoxSphereBounds(
+			FVector(0.0f, 0.0f, 0.0f),
+			FVector(1.0f, 1.0f, 1.0f),
+			1.0f
+		);
 	}
 };
 

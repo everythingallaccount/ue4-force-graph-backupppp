@@ -32,11 +32,6 @@ void AKnowledgeGraph::BeginPlay()
 	// PrimaryActorTick.TickInterval = 2.5f;
 
 
-
-
-	
-
-
 	InitOctree(FBox(FVector(-200, -200, -200), FVector(200, 200, 200)));
 
 
@@ -94,8 +89,6 @@ void AKnowledgeGraph::AddNode(int32 id, AKnowledgeNode* kn, FVector location)
 
 
 
-
-
 		
 		FOctreeElement ote;
 
@@ -118,8 +111,6 @@ void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 	UObject* SpawnClass = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL,
 	                                                     TEXT("Blueprint'/Game/cylinder.cylinder'")));
 	UBlueprint* GeneratedObj = Cast<UBlueprint>(SpawnClass);
-
-
 
 
 	AKnowledgeEdge* e = GetWorld()->SpawnActor<AKnowledgeEdge>(GeneratedObj->GeneratedClass);
@@ -384,17 +375,8 @@ void AKnowledgeGraph::ApplyManyBody(AKnowledgeNode* kn)
 }
 
 
-
-
-
-
-
-
-
 void AKnowledgeGraph::Tick(float DeltaTime)
 {
-
-	
 	Super::Tick(DeltaTime);
 
 
@@ -405,28 +387,26 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	{
 		return;
 	}
-	
-	
+
 
 	UE_LOG(LogTemp, Warning, TEXT("HELLO WORLD!@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
 
 
 	// FPlatformProcess::Sleep(3.0f);
-	
-	
+
+
 	if (!init)
 	{
 		InitNodes();
 
-		
+
 		InitForces();
 	}
-	
+
 	if (alpha < alphaMin)
 		return;
-	
 
-	
+
 	alpha += (alphaTarget - alpha) * alphaDecay; //need to restart this if want to keep moving
 
 
@@ -457,5 +437,4 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 		//            print(all_nodes[l->source]->GetActorLocation().ToString());
 		l->ChangeLoc(all_nodes[l->source]->GetActorLocation(), all_nodes[l->target]->GetActorLocation());
 	}
-
 }
