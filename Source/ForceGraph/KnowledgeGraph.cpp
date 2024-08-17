@@ -28,8 +28,8 @@ void AKnowledgeGraph::BeginPlay()
 	Super::BeginPlay();
 
 
-	UE_LOG(LogTemp, Warning, TEXT("restricting tech interval.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
-	PrimaryActorTick.TickInterval = 2.5f;
+	// UE_LOG(LogTemp, Warning, TEXT("restricting tech interval.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	// PrimaryActorTick.TickInterval = 2.5f;
 
 
 
@@ -415,37 +415,36 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	if (alpha < alphaMin)
 		return;
 
-	for (int i = 0; i < iterations; i++)
+	
+	alpha += (alphaTarget - alpha) * alphaDecay; //need to restart this if want to keep moving
+
+
+	UE_LOG(LogTemp, Warning, TEXT("alpha: %f"), alpha);
+
+	ApplyForces();
+
+	for (auto& node : all_nodes)
 	{
-		alpha += (alphaTarget - alpha) * alphaDecay; //need to restart this if want to keep moving
+		auto kn = node.Value;
+		//            print("FINAL VELOCITY!");
+		//            print(kn->velocity.ToString());
+		kn->velocity *= velocityDecay;
+		if (kn->id == 7 && alpha > 0.2)
+			print("FINAL VELOCITY: " + kn->velocity.ToString());
+		kn->SetActorLocation(kn->GetActorLocation() + kn->velocity);
+		kn->velocity *= 0; //reset velocities
 
-
-		UE_LOG(LogTemp, Warning, TEXT("alpha: %f"), alpha);
-
-		ApplyForces();
-
-		for (auto& node : all_nodes)
-		{
-			auto kn = node.Value;
-			//            print("FINAL VELOCITY!");
-			//            print(kn->velocity.ToString());
-			kn->velocity *= velocityDecay;
-			if (kn->id == 7 && alpha > 0.2)
-				print("FINAL VELOCITY: " + kn->velocity.ToString());
-			kn->SetActorLocation(kn->GetActorLocation() + kn->velocity);
-			kn->velocity *= 0; //reset velocities
-
-			//            print("FINAL POSITION!");
-			//            print(FString::FromInt(node.Key));
-			//            print(kn->GetActorLocation().ToString());
-		}
-
-		for (auto& link : all_links)
-		{
-			auto l = link.Value;
-			//            print("LOCCCCCC");
-			//            print(all_nodes[l->source]->GetActorLocation().ToString());
-			l->ChangeLoc(all_nodes[l->source]->GetActorLocation(), all_nodes[l->target]->GetActorLocation());
-		}
+		//            print("FINAL POSITION!");
+		//            print(FString::FromInt(node.Key));
+		//            print(kn->GetActorLocation().ToString());
 	}
+
+	for (auto& link : all_links)
+	{
+		auto l = link.Value;
+		//            print("LOCCCCCC");
+		//            print(all_nodes[l->source]->GetActorLocation().ToString());
+		l->ChangeLoc(all_nodes[l->source]->GetActorLocation(), all_nodes[l->target]->GetActorLocation());
+	}
+
 }
