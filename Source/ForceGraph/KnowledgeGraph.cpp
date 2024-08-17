@@ -464,6 +464,9 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 		auto l = link.Value;
 		//            print("LOCCCCCC");
 		//            print(all_nodes[l->source]->GetActorLocation().ToString());
-		l->ChangeLoc(all_nodes[l->source]->GetActorLocation(), all_nodes[l->target]->GetActorLocation());
+		l->ChangeLoc(
+			all_nodes[l->source]->GetActorLocation(),
+			all_nodes[l->target]->GetActorLocation()
+			);
 	}
 }
