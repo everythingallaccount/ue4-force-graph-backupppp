@@ -27,14 +27,20 @@ void AKnowledgeGraph::BeginPlay()
 {
 	Super::BeginPlay();
 
+
+	UE_LOG(LogTemp, Warning, TEXT("restricting tech interval.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	PrimaryActorTick.TickInterval = 2.5f;
+
+
+
+
+	
 	UE_LOG(LogTemp, Warning, TEXT("HELLO WORLD!@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
 
 
 	InitOctree(FBox(FVector(-200, -200, -200), FVector(200, 200, 200)));
 
 
-
-	
 	//json crap
 	const FString JsonFilePath = FPaths::ProjectContentDir() + "/data/graph.json";
 	FString JsonString; //Json converted to FString
@@ -50,10 +56,9 @@ void AKnowledgeGraph::BeginPlay()
 		TArray<TSharedPtr<FJsonValue>> jnodes = JsonObject->GetArrayField("nodes");
 		for (int32 i = 0; i < jnodes.Num(); i++)
 		{
-
 			auto jobj = jnodes[i]->AsObject();
 
-			
+
 			int jid = jobj->GetIntegerField("id");
 
 			AKnowledgeNode* kn = GetWorld()->SpawnActor<AKnowledgeNode>();
@@ -79,7 +84,6 @@ void AKnowledgeGraph::AddNode(int32 id, AKnowledgeNode* kn, FVector location)
 {
 	if (!all_nodes.Contains(id))
 	{
-
 		kn->id = id;
 
 		kn->strength = nodeStrength;
@@ -87,9 +91,9 @@ void AKnowledgeGraph::AddNode(int32 id, AKnowledgeNode* kn, FVector location)
 
 		all_nodes.Emplace(id, kn);
 
-		
+
 		FOctreeElement ote;
-		
+
 		ote.MyActor = kn;
 
 		ote.strength = 1.0; // update with strength
@@ -109,6 +113,10 @@ void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 	UObject* SpawnClass = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL,
 	                                                     TEXT("Blueprint'/Game/cylinder.cylinder'")));
 	UBlueprint* GeneratedObj = Cast<UBlueprint>(SpawnClass);
+
+
+
+
 	AKnowledgeEdge* e = GetWorld()->SpawnActor<AKnowledgeEdge>(GeneratedObj->GeneratedClass);
 	e->source = source;
 	e->target = target;
@@ -370,9 +378,27 @@ void AKnowledgeGraph::ApplyManyBody(AKnowledgeNode* kn)
 	}
 }
 
+
+
+
+
+
+
+
+
 void AKnowledgeGraph::Tick(float DeltaTime)
 {
+
+	
 	Super::Tick(DeltaTime);
+
+	
+	UE_LOG(LogTemp, Warning, TEXT("tick1111"));
+	
+
+	// FPlatformProcess::Sleep(3.0f);
+	
+	
 	if (!init)
 	{
 		InitNodes();
