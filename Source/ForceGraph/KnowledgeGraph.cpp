@@ -117,11 +117,13 @@ void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 	AKnowledgeEdge* e = GetWorld()->SpawnActor<AKnowledgeEdge>(
 		GeneratedObj->GeneratedClass
 	);
+	
 	e->source = source;
 	e->target = target;
 	e->strength = 1; //temp
 	e->distance = edgeDistance;
 	all_links.Emplace(id, e);
+	
 }
 
 void AKnowledgeGraph::InitNodes()
