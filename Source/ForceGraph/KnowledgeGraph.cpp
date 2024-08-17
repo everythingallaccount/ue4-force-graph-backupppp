@@ -393,7 +393,6 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	
-	UE_LOG(LogTemp, Warning, TEXT("tick1111"));
 	
 
 	// FPlatformProcess::Sleep(3.0f);
@@ -411,6 +410,10 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	for (int i = 0; i < iterations; i++)
 	{
 		alpha += (alphaTarget - alpha) * alphaDecay; //need to restart this if want to keep moving
+
+
+		UE_LOG(LogTemp, Warning, TEXT("alpha: %f"), alpha);
+
 		ApplyForces();
 
 		for (auto& node : all_nodes)
