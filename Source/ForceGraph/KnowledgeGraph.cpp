@@ -225,7 +225,11 @@ void AKnowledgeGraph::ApplyForces()
 		AddNode(key, kn, kn->GetActorLocation());
 	}
 
+
+	
 	Accumulate();
+
+	
 	for (auto& node : all_nodes)
 	{
 		ApplyManyBody(node.Value);
@@ -305,8 +309,11 @@ void AKnowledgeGraph::Accumulate()
 }
 
 //use nodes to find velocity
-void AKnowledgeGraph::FindManyBodyForce(AKnowledgeNode* kn, const FSimpleOctree::FNode& node,
-                                        const FOctreeNodeContext CurrentContext, FString node_id)
+void AKnowledgeGraph::FindManyBodyForce(
+	AKnowledgeNode* kn,
+	const FSimpleOctree::FNode& node,
+	const FOctreeNodeContext CurrentContext,
+	FString node_id)
 {
 	NodeStrength ns = octree_node_strengths[node_id];
 
@@ -383,9 +390,15 @@ void AKnowledgeGraph::ApplyManyBody(AKnowledgeNode* kn)
 	FVector dir;
 	if (alpha > 0.2 && kn->id == 7)
 		print("--------------------------------------");
-	for (FSimpleOctree::TConstIterator<> NodeIt(*OctreeData); NodeIt.HasPendingNodes(); NodeIt.Advance())
+	for (FSimpleOctree::TConstIterator<> NodeIt(*OctreeData);
+		NodeIt.HasPendingNodes();
+		NodeIt.Advance())
 	{
-		FindManyBodyForce(kn, NodeIt.GetCurrentNode(), NodeIt.GetCurrentContext(), "0");
+		FindManyBodyForce(kn,
+			NodeIt.GetCurrentNode(),
+			NodeIt.GetCurrentContext(),
+			"0"
+			);
 		break;
 	}
 }
