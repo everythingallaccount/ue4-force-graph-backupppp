@@ -117,13 +117,12 @@ void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 	AKnowledgeEdge* e = GetWorld()->SpawnActor<AKnowledgeEdge>(
 		GeneratedObj->GeneratedClass
 	);
-	
+
 	e->source = source;
 	e->target = target;
 	e->strength = 1; //temp
 	e->distance = edgeDistance;
 	all_links.Emplace(id, e);
-	
 }
 
 void AKnowledgeGraph::InitNodes()
@@ -162,8 +161,11 @@ void AKnowledgeGraph::InitForces()
 
 	for (auto& link : all_links)
 	{
-		float bias = all_nodes[link.Value->source]->numberOfConnected / (all_nodes[link.Value->source]->
-			numberOfConnected + all_nodes[link.Value->target]->numberOfConnected);
+		float bias = all_nodes[link.Value->source]->numberOfConnected /
+		(
+			all_nodes[link.Value->source]->numberOfConnected +
+			all_nodes[link.Value->target]->numberOfConnected
+		);
 		link.Value->bias = bias > 0.5 ? (1 - bias) * 0.5 + bias : bias * 0.5;
 		link.Value->strength = 1.0 / fmin(all_nodes[link.Value->source]->numberOfConnected,
 		                                  all_nodes[link.Value->target]->numberOfConnected);
