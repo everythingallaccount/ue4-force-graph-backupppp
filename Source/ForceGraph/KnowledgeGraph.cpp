@@ -455,10 +455,20 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 		auto kn = node.Value;
 		//            print("FINAL VELOCITY!");
 		//            print(kn->velocity.ToString());
+
+
+
+		
 		kn->velocity *= velocityDecay;
+
 		if (kn->id == 7 && alpha > 0.2)
 			print("FINAL VELOCITY: " + kn->velocity.ToString());
+
+
 		kn->SetActorLocation(kn->GetActorLocation() + kn->velocity);
+
+
+
 		kn->velocity *= 0; //reset velocities
 
 		//            print("FINAL POSITION!");
