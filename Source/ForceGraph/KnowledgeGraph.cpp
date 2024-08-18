@@ -36,7 +36,7 @@ void AKnowledgeGraph::BeginPlay()
 
 
 	//json crap
-	const FString JsonFilePath = FPaths::ProjectContentDir() + "/data/graph.json";
+	const FString JsonFilePath = FPaths::ProjectContentDir() + "/data/graph_data.json";
 	FString JsonString; //Json converted to FString
 
 	FFileHelper::LoadFileToString(JsonString, *JsonFilePath);
