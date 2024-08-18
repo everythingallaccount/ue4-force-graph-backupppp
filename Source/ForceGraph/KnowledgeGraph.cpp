@@ -74,7 +74,6 @@ void AKnowledgeGraph::BeginPlay()
 }
 
 
-
 void AKnowledgeGraph::AddNode(int32 id, AKnowledgeNode* kn, FVector location)
 {
 	if (!all_nodes.Contains(id))
@@ -191,7 +190,6 @@ void AKnowledgeGraph::RemoveElement(int key)
 
 void AKnowledgeGraph::ApplyForces()
 {
-
 	// In here velocity of all notes are zeroed
 	// In the following for loop, In the first few loop, the velocity is 0. 
 
@@ -209,7 +207,7 @@ void AKnowledgeGraph::ApplyForces()
 
 		UE_LOG(LogTemp, Warning, TEXT("source VELOCITY1: %s"), *source_velocity.ToString());
 		UE_LOG(LogTemp, Warning, TEXT("target VELOCITY1: %s"), *target_velocity.ToString());
-		
+
 		FVector new_v = target_pos + target_velocity - source_pos - source_velocity;
 		float l = new_v.Size();
 		l = (l - link.Value->distance) / l * alpha * link.Value->strength;
@@ -224,7 +222,6 @@ void AKnowledgeGraph::ApplyForces()
 	}
 
 
-	
 	//charge forces
 	octree_node_strengths.Empty();
 	for (auto& node : all_nodes)
@@ -233,18 +230,16 @@ void AKnowledgeGraph::ApplyForces()
 		auto kn = node.Value;
 
 
-
 		// If they are remove here，then why we do AddOctreeElement(ote) in AddNode?
 		RemoveElement(node.Key); //need to remove then update with new location when adding
 		AddNode(key, kn, kn->GetActorLocation());
 	}
 
 
-
 	// Most of the questions come from here。 
 	Accumulate();
 
-	
+
 	for (auto& node : all_nodes)
 	{
 		ApplyManyBody(node.Value);
@@ -281,11 +276,14 @@ NodeStrength AKnowledgeGraph::AddUpChildren(
 			//go find the leaves
 			if (
 
-			// ChildRef is a special structure, but basically store a number from one to 7. 
-			node.HasChild(ChildRef)
-				)
+				// ChildRef is a special structure, but basically store a number from one to 7. 
+				node.HasChild(ChildRef)
+			)
 			{
-				NodeStrength ns = AddUpChildren(*node.GetChild(ChildRef), node_id + FString::FromInt(count));
+				NodeStrength ns = AddUpChildren(
+					*node.GetChild(ChildRef),
+					node_id + FString::FromInt(count)
+				);
 				//add up children
 				//math for vector and strength
 				c = abs(ns.strength);
@@ -324,7 +322,7 @@ void AKnowledgeGraph::Accumulate()
 	)
 	{
 		const FSimpleOctree::FNode& CurrentNode = NodeIt.GetCurrentNode();
-		UE_LOG(LogTemp, Warning, TEXT("Ready to add up children")); 
+		UE_LOG(LogTemp, Warning, TEXT("Ready to add up children"));
 		AddUpChildren(CurrentNode, "0");
 		break;
 	}
@@ -413,14 +411,14 @@ void AKnowledgeGraph::ApplyManyBody(AKnowledgeNode* kn)
 	if (alpha > 0.2 && kn->id == 7)
 		print("--------------------------------------");
 	for (FSimpleOctree::TConstIterator<> NodeIt(*OctreeData);
-		NodeIt.HasPendingNodes();
-		NodeIt.Advance())
+	     NodeIt.HasPendingNodes();
+	     NodeIt.Advance())
 	{
 		FindManyBodyForce(kn,
-			NodeIt.GetCurrentNode(),
-			NodeIt.GetCurrentContext(),
-			"0"
-			);
+		                  NodeIt.GetCurrentNode(),
+		                  NodeIt.GetCurrentContext(),
+		                  "0"
+		);
 		break;
 	}
 }
@@ -473,7 +471,7 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 		auto kn = node.Value;
 		//            print("FINAL VELOCITY!");
 		//            print(kn->velocity.ToString());
-		
+
 		kn->velocity *= velocityDecay;
 
 		if (kn->id == 7 && alpha > 0.2)
@@ -481,11 +479,10 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 
 
 		FVector NewLocation = kn->GetActorLocation() + kn->velocity;
-		
+
 		kn->SetActorLocation(
 			NewLocation
-			);
-
+		);
 
 
 		kn->velocity *= 0; //reset velocities
@@ -503,6 +500,6 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 		l->ChangeLoc(
 			all_nodes[l->source]->GetActorLocation(),
 			all_nodes[l->target]->GetActorLocation()
-			);
+		);
 	}
 }
