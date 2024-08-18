@@ -29,7 +29,7 @@ void AKnowledgeGraph::BeginPlay()
 
 
 	UE_LOG(LogTemp, Warning, TEXT("restricting tech interval.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
-	PrimaryActorTick.TickInterval = 2.5f;
+	PrimaryActorTick.TickInterval = 0.5f;
 
 
 	InitOctree(FBox(FVector(-200, -200, -200), FVector(200, 200, 200)));
