@@ -279,7 +279,11 @@ NodeStrength AKnowledgeGraph::AddUpChildren(
 		FOREACH_OCTREE_CHILD_NODE(ChildRef)
 		{
 			//go find the leaves
-			if (node.HasChild(ChildRef))
+			if (
+
+			// ChildRef is a special structure, but basically store a number from one to 7. 
+			node.HasChild(ChildRef)
+				)
 			{
 				NodeStrength ns = AddUpChildren(*node.GetChild(ChildRef), node_id + FString::FromInt(count));
 				//add up children
@@ -320,6 +324,7 @@ void AKnowledgeGraph::Accumulate()
 	)
 	{
 		const FSimpleOctree::FNode& CurrentNode = NodeIt.GetCurrentNode();
+		UE_LOG(LogTemp, Warning, TEXT("Ready to add up children")); 
 		AddUpChildren(CurrentNode, "0");
 		break;
 	}
