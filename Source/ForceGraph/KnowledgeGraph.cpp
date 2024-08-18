@@ -193,7 +193,8 @@ void AKnowledgeGraph::ApplyForces()
 	// In here velocity of all notes are zeroed
 	// In the following for loop, In the first few loop, the velocity is 0. 
 
-	//link forces
+	// link forces
+	// After loop, the velocity of all notes have been altered a little bit because of the link force already. 
 	for (auto& link : all_links)
 	{
 		auto source_node = all_nodes[link.Value->source];
@@ -230,8 +231,11 @@ void AKnowledgeGraph::ApplyForces()
 		auto kn = node.Value;
 
 
+		// Because the actor location hasn't changed when we compute the link force, so These two lines could actually be put in the start of the function. 
+
 		// If they are remove here，then why we do AddOctreeElement(ote) in AddNode?
 		RemoveElement(node.Key); //need to remove then update with new location when adding
+
 		AddNode(key, kn, kn->GetActorLocation());
 	}
 
@@ -294,7 +298,6 @@ NodeStrength AKnowledgeGraph::AddUpChildren(
 				weight += c;
 
 
-				
 				tempvec += c * ns.direction;
 
 				count++;
@@ -355,9 +358,11 @@ void AKnowledgeGraph::FindManyBodyForce(
 	FVector center = CurrentBounds.Center;
 	FVector width = CurrentBounds.Extent;
 	FVector dir = ns.direction - kn->GetActorLocation();
+
+	// Remember that direction is the sum of all the Actor locations of the elements in that note. 
 	float l = dir.Size() * dir.Size();
 
-	//if size of current box is less than distance between nodes
+	// if size of current box is less than distance between nodes
 	if (width.X * width.X / theta2 < l)
 	{
 		//        print("GOING IN HERE");
@@ -375,6 +380,9 @@ void AKnowledgeGraph::FindManyBodyForce(
 	}
 
 	// if not leaf, get all children
+
+	// People do we have to check on L bigger than distance max?
+	// FOREACH_OCTREE_CHILD_NODE Will not run if the note is LeaF note. , even if L is bigger than distance max. 
 	if (!node.IsLeaf() || l >= distancemax)
 	{
 		//recurse down this dude
@@ -395,7 +403,9 @@ void AKnowledgeGraph::FindManyBodyForce(
 	{
 		//print("IM LEAF");
 		if (l < distancemin)
+		{
 			l = sqrt(distancemin * l);
+		}
 		for (FSimpleOctree::ElementConstIt ElementIt(node.GetElementIt()); ElementIt; ++ElementIt)
 		{
 			const FOctreeElement& Sample = *ElementIt;
@@ -420,9 +430,11 @@ void AKnowledgeGraph::ApplyManyBody(AKnowledgeNode* kn)
 	FVector dir;
 	if (alpha > 0.2 && kn->id == 7)
 		print("--------------------------------------");
-	for (FSimpleOctree::TConstIterator<> NodeIt(*OctreeData);
-	     NodeIt.HasPendingNodes();
-	     NodeIt.Advance())
+	for (
+		FSimpleOctree::TConstIterator<> NodeIt(*OctreeData);
+		NodeIt.HasPendingNodes();
+		NodeIt.Advance()
+	)
 	{
 		FindManyBodyForce(kn,
 		                  NodeIt.GetCurrentNode(),
