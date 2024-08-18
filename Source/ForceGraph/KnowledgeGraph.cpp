@@ -287,8 +287,14 @@ NodeStrength AKnowledgeGraph::AddUpChildren(
 				//add up children
 				//math for vector and strength
 				c = abs(ns.strength);
+
+				// Typically should be a positive integer, so strength will be same as weight. 
 				strength += ns.strength;
+
 				weight += c;
+
+
+				
 				tempvec += c * ns.direction;
 
 				count++;
@@ -303,12 +309,16 @@ NodeStrength AKnowledgeGraph::AddUpChildren(
 		{
 			//all the way down to elements
 			const FOctreeElement& Sample = *ElementIt;
+
+
+			// So basically we add up all the strength inside a leaf node
 			octree_node_strengths[node_id].strength += Sample.MyActor->strength;
+			// When we summing up all the actual locations as a vector, it seems that it take an average location. 
 			octree_node_strengths[node_id].direction += Sample.MyActor->GetActorLocation();
 		}
 	}
 
-	octree_node_strengths[node_id].direction.ToString(); //?
+	// octree_node_strengths[node_id].direction.ToString(); //?
 	return octree_node_strengths[node_id];
 }
 
