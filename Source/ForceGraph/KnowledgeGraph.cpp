@@ -74,6 +74,7 @@ void AKnowledgeGraph::BeginPlay()
 }
 
 
+
 void AKnowledgeGraph::AddNode(int32 id, AKnowledgeNode* kn, FVector location)
 {
 	if (!all_nodes.Contains(id))
@@ -222,18 +223,25 @@ void AKnowledgeGraph::ApplyForces()
 			print("LINK VEL: " + (new_v * (1 - link.Value->bias)).ToString());
 	}
 
+
+	
 	//charge forces
 	octree_node_strengths.Empty();
 	for (auto& node : all_nodes)
 	{
 		int key = node.Key;
 		auto kn = node.Value;
+
+
+
+		// If they are remove here，then why we do AddOctreeElement(ote) in AddNode?
 		RemoveElement(node.Key); //need to remove then update with new location when adding
 		AddNode(key, kn, kn->GetActorLocation());
 	}
 
 
-	
+
+	// Most of the questions come from here。 
 	Accumulate();
 
 	
@@ -266,6 +274,8 @@ NodeStrength AKnowledgeGraph::AddUpChildren(
 		float strength = 0.0;
 		float weight = 0.0;
 		FVector tempvec;
+
+
 		FOREACH_OCTREE_CHILD_NODE(ChildRef)
 		{
 			//go find the leaves
