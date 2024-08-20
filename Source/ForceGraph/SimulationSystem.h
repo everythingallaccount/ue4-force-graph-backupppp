@@ -5,9 +5,9 @@
 #include "TimerManager.h"
 #include <map>
 
-class UWorld;
+// class UWorld;
 
-class SIMULATIONSYSTEM_API FSimulationSystem
+class FSimulationSystem
 {
 public:
     FSimulationSystem(UWorld* InWorld);
@@ -35,4 +35,4 @@ private:
     void UpdateSimulationParameters();
 
     FTimerHandle TimerHandle;
-}
+};
