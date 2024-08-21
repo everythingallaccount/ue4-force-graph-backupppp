@@ -7,13 +7,14 @@
 
 #define MAX_DIMENSIONS 3
 
-
-
-
-
 FSimulationSystem::FSimulationSystem(UWorld* InWorld)
-: World(InWorld), NumDimensions(2), Alpha(1.0), AlphaMin(0.001), AlphaDecay(0.05),
-  AlphaTarget(0.0), VelocityDecay(0.6)
+: World(InWorld),
+NumDimensions(3),
+Alpha(1.0),
+AlphaMin(0.001),
+AlphaDecay(0.05),
+AlphaTarget(0.0),
+VelocityDecay(0.6)
 {
 }
 
@@ -25,22 +26,47 @@ FSimulationSystem::~FSimulationSystem()
 
 
 
-void FSimulationSystem::Tick(float DeltaTime)
+void FSimulationSystem::Tick(int iterations=1)
 {
-    ApplyForces();
-    
-    for (FNode& Node : Nodes)
+    for (int i = 0; i < iterations; ++i)
     {
-        if (!Node.bIsPositionFixed)
+        
+        ApplyForces();
+        for (FNode& Node : Nodes)
         {
-            Node.Position += Node.Velocity * DeltaTime;
+            if (!Node.bIsPositionFixed)
+            {
+                Node.Position += Node.Velocity;
+            }
         }
     }
 }
 
+//
+// void FSimulationSystem::AddNode()
+// {
+//     // this->NumDimensions = FMath::Clamp(NumDimensionsS, 1, MAX_DIMENSIONS);
+//     this->NumDimensions = 3;
+//     Nodes.Empty();
+//
+//     for(int i = 0; i < NumNodes; ++i)
+//     {
+//         FNode Node;
+//         // Default init
+//         Node.Position = FVector::ZeroVector;
+//         Node.Velocity = FVector::ZeroVector;
+//         Node.bIsPositionFixed = false;
+//
+//         Nodes.Add(Node);
+//     }
+//
+//     InitializeNodePositions();
+// }
+
 void FSimulationSystem::InitializeNodes(int NumNodes, int NumDimensionsS)
 {
-    this->NumDimensions = FMath::Clamp(NumDimensionsS, 1, MAX_DIMENSIONS);
+    // this->NumDimensions = FMath::Clamp(NumDimensionsS, 1, MAX_DIMENSIONS);
+    this->NumDimensions = 3;
     Nodes.Empty();
 
     for(int i = 0; i < NumNodes; ++i)

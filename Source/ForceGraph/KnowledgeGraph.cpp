@@ -2,6 +2,8 @@
 
 
 #include "KnowledgeGraph.h"
+
+#include "SimulationSystem.h"
 #define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10, FColor::White,text)
 
 FSimpleOctree::FSimpleOctree(const FVector& InOrigin, float InExtent) : TOctree(InOrigin, InExtent)
@@ -17,6 +19,9 @@ void FOctreeSematics::SetElementId(FOctreeSematics::FOctree& thisOctree, const F
 AKnowledgeGraph::AKnowledgeGraph()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+
+	SimulationSystem = new FSimulationSystem(GetWorld());
 }
 
 AKnowledgeGraph::~AKnowledgeGraph()
@@ -28,7 +33,7 @@ void AKnowledgeGraph::BeginPlay()
 	Super::BeginPlay();
 
 
-	UE_LOG(LogTemp, Warning, TEXT("restricting tech interval.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	UE_LOG(LogTemp, Warning, TEXT("Begin play called, Restricting tick interval"));
 	PrimaryActorTick.TickInterval = 0.5f;
 
 
@@ -104,14 +109,19 @@ void AKnowledgeGraph::AddOctreeElement(const FOctreeElement& inNewOctreeElement)
 
 void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 {
+
+
+	
 	UObject* SpawnClass = Cast<UObject>(
 		StaticLoadObject(UObject::StaticClass(),
 		                 NULL,
 		                 TEXT("Blueprint'/Game/cylinder.cylinder'")
 		)
 	);
-
 	UBlueprint* GeneratedObj = Cast<UBlueprint>(SpawnClass);
+
+
+
 
 
 	AKnowledgeEdge* e = GetWorld()->SpawnActor<AKnowledgeEdge>(
@@ -123,6 +133,10 @@ void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 	e->strength = 1; //temp
 	e->distance = edgeDistance;
 	all_links.Emplace(id, e);
+
+
+	SimulationSystem->all_links.Emplace(id, e);
+	
 }
 
 void AKnowledgeGraph::InitNodes()
@@ -335,7 +349,7 @@ void AKnowledgeGraph::Accumulate()
 	)
 	{
 		const FSimpleOctree::FNode& CurrentNode = NodeIt.GetCurrentNode();
-		UE_LOG(LogTemp, Warning, TEXT("Ready to add up children"));
+		// UE_LOG(LogTemp, Warning, TEXT("Ready to add up children"));
 		AddUpChildren(CurrentNode, "0");
 		break;
 	}
@@ -460,7 +474,7 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	}
 
 
-	UE_LOG(LogTemp, Warning, TEXT("HELLO WORLD!@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	UE_LOG(LogTemp, Warning, TEXT("tick,alpha: %f"), alpha);
 
 
 	// FPlatformProcess::Sleep(3.0f);
@@ -484,7 +498,7 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	alpha += (alphaTarget - alpha) * alphaDecay; //need to restart this if want to keep moving
 
 
-	UE_LOG(LogTemp, Warning, TEXT("alpha: %f"), alpha);
+	
 
 	ApplyForces();
 

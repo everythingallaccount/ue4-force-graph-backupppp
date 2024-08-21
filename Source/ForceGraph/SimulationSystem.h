@@ -5,21 +5,27 @@
 #include "TimerManager.h"
 #include <map>
 
+#include "KnowledgeEdge.h"
+
 // class UWorld;
 
-class FSimulationSystem
+class  FORCEGRAPH_API FSimulationSystem
 {
 public:
     FSimulationSystem(UWorld* InWorld);
     ~FSimulationSystem();
 
-    void Tick(float DeltaTime);
+    void Tick(int iterations);
     void InitializeNodes(int NumNodes, int NumDimensions);
     void ApplyForces();
     FNode* FindClosestNode(const FVector& Point, float MaxRadius);
 
-private:
+public:
     TArray<FNode> Nodes;
+    TMap<int32, AKnowledgeEdge*> all_links;
+
+
+    
     UWorld* World;
 
     int NumDimensions;

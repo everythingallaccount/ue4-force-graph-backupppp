@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "CoreMinimal.h"
+#include "SimulationSystem.h"
 #include "KnowledgeGraph.generated.h"
 
 /**
@@ -151,4 +152,6 @@ private:
 	bool init = false;
 
 	FSimpleOctree* OctreeData;
+	FSimulationSystem* SimulationSystem;
+
 };
