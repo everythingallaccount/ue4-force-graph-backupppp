@@ -261,7 +261,18 @@ void AKnowledgeGraph::ApplyForces()
 		// By looking at the javascript code, we can see strength Will only be computed when there is a change to the graph.
 		l = (l - link.Value->distance) / l * alpha * link.Value->strength;
 		new_v *= l;
-		target_node->velocity -= new_v * (1 - link.Value->bias);
+
+
+
+		if (0)
+		{
+			target_node->velocity -= new_v * (1 - link.Value->bias);
+			
+		}else
+		{
+			target_node->velocity -= new_v * (link.Value->bias);
+		}
+		
 		source_node->velocity += new_v * (link.Value->bias);
 
 		// if (target_node->id == 7 && alpha > 0.2)
