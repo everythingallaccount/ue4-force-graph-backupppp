@@ -181,7 +181,17 @@ void AKnowledgeGraph::InitForces()
 			all_nodes[link.Value->source]->numberOfConnected +
 			all_nodes[link.Value->target]->numberOfConnected
 		);
-		link.Value->bias = bias > 0.5 ? (1 - bias) * 0.5 + bias : bias * 0.5;
+		
+		if (0)
+		{
+			link.Value->bias = bias > 0.5 ? (1 - bias) * 0.5 + bias : bias * 0.5;
+
+		}else
+		{
+			link.Value->bias = bias;
+		}
+
+
 		link.Value->strength = 1.0 / fmin(all_nodes[link.Value->source]->numberOfConnected,
 		                                  all_nodes[link.Value->target]->numberOfConnected);
 	}
