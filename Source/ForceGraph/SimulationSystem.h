@@ -17,6 +17,8 @@ public:
     ~FSimulationSystem();
 
     void Tick(int iterations);
+    void Tick111(int iterations);
+
     void InitializeNodes(int NumNodes, int NumDimensions);
     void ApplyForces();
     FNode* FindClosestNode(const FVector& Point, float MaxRadius);

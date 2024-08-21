@@ -28,6 +28,11 @@ FSimulationSystem::~FSimulationSystem()
 
 void FSimulationSystem::Tick(int iterations=1)
 {
+    Tick111(iterations);
+}
+
+void FSimulationSystem::Tick111(int iterations=1)
+{
     for (int i = 0; i < iterations; ++i)
     {
         
@@ -41,6 +46,11 @@ void FSimulationSystem::Tick(int iterations=1)
         }
     }
 }
+
+
+
+
+
 
 //
 // void FSimulationSystem::AddNode()
