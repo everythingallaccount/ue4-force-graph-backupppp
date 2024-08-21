@@ -41,7 +41,7 @@ void AKnowledgeGraph::BeginPlay()
 
 
 	//json crap
-	const FString JsonFilePath = FPaths::ProjectContentDir() + "/data/graph_data.json";
+	const FString JsonFilePath = FPaths::ProjectContentDir() + "/data/graph.json";
 	FString JsonString; //Json converted to FString
 
 	FFileHelper::LoadFileToString(JsonString, *JsonFilePath);
@@ -76,6 +76,16 @@ void AKnowledgeGraph::BeginPlay()
 			AddEdge(jid, jsource, jtarget);
 		}
 	}
+
+
+
+	if (!init)
+	{
+		InitNodes();
+
+
+		InitForces();
+	}
 }
 
 
@@ -89,14 +99,11 @@ void AKnowledgeGraph::AddNode(int32 id, AKnowledgeNode* kn, FVector location)
 
 
 		all_nodes.Emplace(id, kn);
-
+		SimulationSystem->all_nodes.Emplace(id, kn);
 
 		FOctreeElement ote;
-
 		ote.MyActor = kn;
-
 		ote.strength = 1.0; // update with strength
-
 		ote.BoxSphereBounds = FBoxSphereBounds(location, FVector(1.0f, 1.0f, 1.0f), 1.0f);
 		AddOctreeElement(ote);
 	}
@@ -134,9 +141,9 @@ void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 	e->distance = edgeDistance;
 	all_links.Emplace(id, e);
 
-
-	SimulationSystem->all_links.Emplace(id, e);
 	
+	SimulationSystem->all_links.Emplace(id, e);
+	UE_LOG(LogTemp, Warning, TEXT("SIMULATION SYSTEM LINKS: %d"), SimulationSystem->all_links.Num());
 }
 
 void AKnowledgeGraph::InitNodes()
@@ -220,8 +227,8 @@ void AKnowledgeGraph::ApplyForces()
 		FVector target_pos = target_node->GetActorLocation();
 		FVector target_velocity = target_node->velocity;
 
-		UE_LOG(LogTemp, Warning, TEXT("source VELOCITY1: %s"), *source_velocity.ToString());
-		UE_LOG(LogTemp, Warning, TEXT("target VELOCITY1: %s"), *target_velocity.ToString());
+		// UE_LOG(LogTemp, Warning, TEXT("source VELOCITY1: %s"), *source_velocity.ToString());
+		// UE_LOG(LogTemp, Warning, TEXT("target VELOCITY1: %s"), *target_velocity.ToString());
 
 		FVector new_v = target_pos + target_velocity - source_pos - source_velocity;
 		float l = new_v.Size();
@@ -230,10 +237,12 @@ void AKnowledgeGraph::ApplyForces()
 		target_node->velocity -= new_v * (1 - link.Value->bias);
 		source_node->velocity += new_v * (link.Value->bias);
 
-		if (target_node->id == 7 && alpha > 0.2)
-			print("LINK VEL: " + (-1 * new_v * (1 - link.Value->bias)).ToString());
-		if (source_node->id == 7 && alpha > 0.2)
-			print("LINK VEL: " + (new_v * (1 - link.Value->bias)).ToString());
+		// if (target_node->id == 7 && alpha > 0.2)
+		// 	print("LINK VEL: " + (-1 * new_v * (1 - link.Value->bias)).ToString());
+		// if (source_node->id == 7 && alpha > 0.2)
+		// 	print("LINK VEL: " + (new_v * (1 - link.Value->bias)).ToString());
+
+
 	}
 
 
@@ -472,7 +481,7 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	{
 		return;
 	}
-
+	
 
 	UE_LOG(LogTemp, Warning, TEXT("tick,alpha: %f"), alpha);
 
@@ -480,13 +489,7 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	// FPlatformProcess::Sleep(3.0f);
 
 
-	if (!init)
-	{
-		InitNodes();
-
-
-		InitForces();
-	}
+	
 
 	if (alpha < alphaMin)
 	{
@@ -504,14 +507,20 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 
 	for (auto& node : all_nodes)
 	{
+
+
+		
 		auto kn = node.Value;
 		//            print("FINAL VELOCITY!");
 		//            print(kn->velocity.ToString());
 
 		kn->velocity *= velocityDecay;
 
-		if (kn->id == 7 && alpha > 0.2)
-			print("FINAL VELOCITY: " + kn->velocity.ToString());
+
+
+		
+		// if (kn->id == 7 && alpha > 0.2)
+		// 	print("FINAL VELOCITY: " + kn->velocity.ToString());
 
 
 		FVector NewLocation = kn->GetActorLocation() + kn->velocity;
@@ -530,6 +539,8 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 
 	for (auto& link : all_links)
 	{
+
+		
 		auto l = link.Value;
 		//            print("LOCCCCCC");
 		//            print(all_nodes[l->source]->GetActorLocation().ToString());

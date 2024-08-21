@@ -6,6 +6,7 @@
 #include <map>
 
 #include "KnowledgeEdge.h"
+#include "KnowledgeNode.h"
 
 // class UWorld;
 
@@ -21,8 +22,11 @@ public:
     FNode* FindClosestNode(const FVector& Point, float MaxRadius);
 
 public:
-    TArray<FNode> Nodes;
-    TMap<int32, AKnowledgeEdge*> all_links;
+    TArray<FNode> Nodes;      // this one contain the positions.
+    TArray<int32> NodesID;      // this one contain the id of the nodes.
+
+    TMap<int32, AKnowledgeNode*> all_nodes;
+    TMap<int32, AKnowledgeEdge*> all_links; // this one contain the links.
 
 
     
