@@ -26,6 +26,7 @@ AKnowledgeGraph::AKnowledgeGraph()
 
 AKnowledgeGraph::~AKnowledgeGraph()
 {
+	UE_LOG(LogTemp, Warning, TEXT("DESTRUCTOR CALLED!@!!!!!!!!!!!!!!!!!!!!!!!!!!"));
 }
 
 void AKnowledgeGraph::BeginPlay()
@@ -82,8 +83,6 @@ void AKnowledgeGraph::BeginPlay()
 	if (!init)
 	{
 		InitNodes();
-
-
 		InitForces();
 	}
 }
@@ -241,8 +240,6 @@ void AKnowledgeGraph::ApplyForces()
 		// 	print("LINK VEL: " + (-1 * new_v * (1 - link.Value->bias)).ToString());
 		// if (source_node->id == 7 && alpha > 0.2)
 		// 	print("LINK VEL: " + (new_v * (1 - link.Value->bias)).ToString());
-
-
 	}
 
 
