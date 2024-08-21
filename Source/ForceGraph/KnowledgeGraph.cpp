@@ -56,9 +56,6 @@ void AKnowledgeGraph::BeginPlay()
 		TArray<TSharedPtr<FJsonValue>> jnodes = JsonObject->GetArrayField("nodes");
 		for (int32 i = 0; i < jnodes.Num(); i++)
 		{
-
-
-			
 			auto jobj = jnodes[i]->AsObject();
 			int jid = jobj->GetIntegerField("id");
 			AKnowledgeNode* kn = GetWorld()->SpawnActor<AKnowledgeNode>();
@@ -82,7 +79,6 @@ void AKnowledgeGraph::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("JSON PARSING FAILED"));
 	}
-
 
 
 	if (!init)
@@ -120,9 +116,6 @@ void AKnowledgeGraph::AddOctreeElement(const FOctreeElement& inNewOctreeElement)
 
 void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 {
-
-
-	
 	UObject* SpawnClass = Cast<UObject>(
 		StaticLoadObject(UObject::StaticClass(),
 		                 NULL,
@@ -130,9 +123,6 @@ void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 		)
 	);
 	UBlueprint* GeneratedObj = Cast<UBlueprint>(SpawnClass);
-
-
-
 
 
 	AKnowledgeEdge* e = GetWorld()->SpawnActor<AKnowledgeEdge>(
@@ -145,7 +135,7 @@ void AKnowledgeGraph::AddEdge(int32 id, int32 source, int32 target)
 	e->distance = edgeDistance;
 	all_links.Emplace(id, e);
 
-	
+
 	SimulationSystem->all_links.Emplace(id, e);
 	UE_LOG(LogTemp, Warning, TEXT("SIMULATION SYSTEM LINKS: %d"), SimulationSystem->all_links.Num());
 }
@@ -213,6 +203,17 @@ void AKnowledgeGraph::RemoveElement(int key)
 	all_nodes.Remove(key);
 }
 
+
+FVector Jiggle(const FVector& Vec, float Magnitude)
+{
+	FVector RandomJitter;
+	RandomJitter.X = FMath::RandRange(-0.5f, 0.5f) * Magnitude;
+	RandomJitter.Y = FMath::RandRange(-0.5f, 0.5f) * Magnitude;
+	RandomJitter.Z = FMath::RandRange(-0.5f, 0.5f) * Magnitude;
+
+	return Vec + RandomJitter;
+}
+
 void AKnowledgeGraph::ApplyForces()
 {
 	// In here velocity of all notes are zeroed
@@ -234,8 +235,20 @@ void AKnowledgeGraph::ApplyForces()
 		// UE_LOG(LogTemp, Warning, TEXT("source VELOCITY1: %s"), *source_velocity.ToString());
 		// UE_LOG(LogTemp, Warning, TEXT("target VELOCITY1: %s"), *target_velocity.ToString());
 
+
 		FVector new_v = target_pos + target_velocity - source_pos - source_velocity;
+
+
+		if (new_v.IsNearlyZero())
+		{
+			new_v = Jiggle(new_v, 1e-6f);
+		}
+
 		float l = new_v.Size();
+		UE_LOG(LogTemp, Warning, TEXT("!!!link.Value->distance: %f"), link.Value->distance);
+
+
+		// By looking at the javascript code, we can see strength Will only be computed when there is a change to the graph.
 		l = (l - link.Value->distance) / l * alpha * link.Value->strength;
 		new_v *= l;
 		target_node->velocity -= new_v * (1 - link.Value->bias);
@@ -483,11 +496,9 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	{
 		return;
 	}
-	
 
 
-
-	if(1)
+	if (1)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("tick,alpha: %f"), alpha);
 		if (alpha < alphaMin)
@@ -495,16 +506,13 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 			UE_LOG(LogTemp, Warning, TEXT("alpha is less than alphaMin"));
 			return;
 		}
-	
+
 		alpha += (alphaTarget - alpha) * alphaDecay; //need to restart this if want to keep moving
-	
+
 		ApplyForces();
 
 		for (auto& node : all_nodes)
 		{
-
-
-		
 			auto kn = node.Value;
 			//            print("FINAL VELOCITY!");
 			//            print(kn->velocity.ToString());
@@ -512,8 +520,6 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 			kn->velocity *= velocityDecay;
 
 
-
-		
 			// if (kn->id == 7 && alpha > 0.2)
 			// 	print("FINAL VELOCITY: " + kn->velocity.ToString());
 
@@ -534,8 +540,6 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 
 		for (auto& link : all_links)
 		{
-
-		
 			auto l = link.Value;
 			//            print("LOCCCCCC");
 			//            print(all_nodes[l->source]->GetActorLocation().ToString());
@@ -544,11 +548,8 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 				all_nodes[l->target]->GetActorLocation()
 			);
 		}
-	}else
-	{
-		
 	}
-	
-	
-	
+	else
+	{
+	}
 }
