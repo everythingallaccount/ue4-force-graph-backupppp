@@ -77,6 +77,10 @@ void AKnowledgeGraph::BeginPlay()
 			AddEdge(jid, jsource, jtarget);
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("JSON PARSING FAILED"));
+	}
 
 
 
