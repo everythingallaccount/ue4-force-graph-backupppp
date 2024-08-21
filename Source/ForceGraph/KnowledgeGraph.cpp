@@ -56,11 +56,11 @@ void AKnowledgeGraph::BeginPlay()
 		TArray<TSharedPtr<FJsonValue>> jnodes = JsonObject->GetArrayField("nodes");
 		for (int32 i = 0; i < jnodes.Num(); i++)
 		{
+
+
+			
 			auto jobj = jnodes[i]->AsObject();
-
-
 			int jid = jobj->GetIntegerField("id");
-
 			AKnowledgeNode* kn = GetWorld()->SpawnActor<AKnowledgeNode>();
 
 
@@ -74,6 +74,7 @@ void AKnowledgeGraph::BeginPlay()
 			int jid = jobj->GetIntegerField("id");
 			int jsource = jobj->GetIntegerField("source");
 			int jtarget = jobj->GetIntegerField("target");
+
 			AddEdge(jid, jsource, jtarget);
 		}
 	}
