@@ -101,6 +101,8 @@ class FORCEGRAPH_API AKnowledgeGraph : public AActor
 public:
 	AKnowledgeGraph();
 	~AKnowledgeGraph();
+	void GenerateConnectedGraph(int32 NumClusters, int32 NodesPerCluster);
+
 	void AddNode(int32 id, AKnowledgeNode* kn, FVector location);
 	void AddEdge(int32 id, int32 source, int32 target);
 	void AddOctreeElement(const FOctreeElement& inNewOctreeElement);

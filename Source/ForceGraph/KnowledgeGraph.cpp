@@ -31,6 +31,43 @@ AKnowledgeGraph::~AKnowledgeGraph()
 	UE_LOG(LogTemp, Warning, TEXT("DESTRUCTOR CALLED!@!!!!!!!!!!!!!!!!!!!!!!!!!!"));
 }
 
+
+
+void AKnowledgeGraph::GenerateConnectedGraph(int32 NumClusters, int32 NodesPerCluster)
+{
+	if (!GetWorld()) return;
+
+	TArray<int32> ClusterCenterIDs;
+	ClusterCenterIDs.Reserve(NumClusters);
+
+	// Create Cluster Centers
+	for (int32 i = 0; i < NumClusters; ++i) {
+		FVector Location = FVector(i * 100.0f, 0, 0); // Staggered positioning
+		AKnowledgeNode* Node = GetWorld()->SpawnActor<AKnowledgeNode>(AKnowledgeNode::StaticClass(), Location, FRotator::ZeroRotator);
+		int32 nodeId = i;  // Assign node ID, assumed incremented or derived
+		AddNode(nodeId, Node, Location);
+		ClusterCenterIDs.Add(nodeId);
+	}
+    
+	// Connect Cluster Nodes
+	for (int32 i = 0; i < NumClusters; ++i) {
+		for (int32 j = 1; j < NodesPerCluster; ++j) {
+			FVector Location = FVector(i * 100.0f, j * 50.0f, 0); // Organize per cluster
+			AKnowledgeNode* Node = GetWorld()->SpawnActor<AKnowledgeNode>(AKnowledgeNode::StaticClass(), Location, FRotator::ZeroRotator);
+			int32 nodeId = i * NodesPerCluster + j;  // Calculate unique node ID
+			AddNode(nodeId, Node, Location);
+			AddEdge(nodeId, ClusterCenterIDs[i], nodeId); // Use node IDs for connection
+		}
+	}
+
+	// Inter-cluster Connections
+	for (int32 i = 0; i < NumClusters - 1; ++i) {
+		AddEdge(i, ClusterCenterIDs[i], ClusterCenterIDs[i + 1]); // Use node IDs to connect cluster centers
+	}
+}
+
+
+
 void AKnowledgeGraph::BeginPlay()
 {
 	Super::BeginPlay();
@@ -85,39 +122,44 @@ void AKnowledgeGraph::BeginPlay()
 	}
 	else
 	{
-		//Retrieving an array property and printing each field
-		int jnodes =jnodes1 ;
-		for (int32 i = 0; i < jnodes; i++)
+		if (0)
 		{
+			//Retrieving an array property and printing each field
+			int jnodes =jnodes1 ;
+			for (int32 i = 0; i < jnodes; i++)
+			{
 			
-			int jid = i;
-			AKnowledgeNode* kn = GetWorld()->SpawnActor<AKnowledgeNode>();
+				int jid = i;
+				AKnowledgeNode* kn = GetWorld()->SpawnActor<AKnowledgeNode>();
+				AddNode(jid, kn, FVector(0, 0, 0));
+			}
 
+			// Edge creation loop
+			int jedges = jnodes; // Adjust the number of edges as needed to ensure coverage
+			std::random_device rd;
+			std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+			std::uniform_int_distribution<> dis(0, jnodes - 1); // Random number distribution
 
-			AddNode(jid, kn, FVector(0, 0, 0));
-		}
+			for (int32 i = 0; i < jedges; i++) {
+				int jid = i;
+				int jsource = i % jnodes;           // Ensures jsource is always valid within the index range
+				int jtarget = (i + 1) % jnodes;     // Connect each node to the next node; wraps around
 
-		// Edge creation loop
-		int jedges = jnodes; // Adjust the number of edges as needed to ensure coverage
-		std::random_device rd;
-		std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-		std::uniform_int_distribution<> dis(0, jnodes - 1); // Random number distribution
+				AddEdge(jid, jsource, jtarget);
 
-		for (int32 i = 0; i < jedges; i++) {
-			int jid = i;
-			int jsource = i % jnodes;           // Ensures jsource is always valid within the index range
-			int jtarget = (i + 1) % jnodes;     // Connect each node to the next node; wraps around
-
-			AddEdge(jid, jsource, jtarget);
-
-			// Random additional edge to increase graph density
-			if (i < jnodes - 1) {
-				int random_target = dis(gen);
-				// Ensure that we do not add self-loops
-				if (random_target != jsource) {
-					AddEdge(jid + jnodes, jsource, random_target); // Use jid+jnodes to keep distinct edge IDs
+				// Random additional edge to increase graph density
+				if (i < jnodes - 1) {
+					int random_target = dis(gen);
+					// Ensure that we do not add self-loops
+					if (random_target != jsource) {
+						AddEdge(jid + jnodes, jsource, random_target); // Use jid+jnodes to keep distinct edge IDs
+					}
 				}
 			}
+		}
+		else
+		{
+			GenerateConnectedGraph(10, 20);
 		}
 	}
 
