@@ -124,6 +124,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Attributes)
 	float iterations = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Attributes)
+	float maxiterations = 10000;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Attributes)
 	float alphaMin = 0.001;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Attributes)
 	float alphaDecay = pow(alphaMin, 0.05);

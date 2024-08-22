@@ -635,7 +635,7 @@ void AKnowledgeGraph::Tick(float DeltaTime)
 	iterations += 1;
 
 
-	if (iterations > 10000000)
+	if (iterations > maxiterations)
 	{
 		return;
 	}
