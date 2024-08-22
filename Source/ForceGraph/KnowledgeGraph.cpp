@@ -424,6 +424,7 @@ void AKnowledgeGraph::FindManyBodyForce(
 	float l = dir.Size() * dir.Size();
 
 	// if size of current box is less than distance between nodes
+	// This is used to stop recurring down the tree.
 	if (width.X * width.X / theta2 < l)
 	{
 		//        print("GOING IN HERE");
@@ -454,8 +455,12 @@ void AKnowledgeGraph::FindManyBodyForce(
 		{
 			if (node.HasChild(ChildRef))
 			{
-				FindManyBodyForce(kn, *node.GetChild(ChildRef), CurrentContext.GetChildContext(ChildRef),
-				                  node_id + FString::FromInt(count));
+				FindManyBodyForce(
+					kn,
+					*node.GetChild(ChildRef),
+					CurrentContext.GetChildContext(ChildRef),
+					node_id + FString::FromInt(count)
+					);
 				count++;
 			}
 		}
@@ -475,11 +480,17 @@ void AKnowledgeGraph::FindManyBodyForce(
 				dir = Sample.MyActor->GetActorLocation() - kn->GetActorLocation();
 				l = dir.Size() * dir.Size();
 				float mult = pow(Sample.MyActor->numberOfConnected, 3.0);
-				if (kn->id == 7 && alpha > 0.2)
+
+
+				if (0)
 				{
-					print(FString::FromInt(Sample.MyActor->id));
-					print((dir * Sample.MyActor->strength * alpha / l * mult).ToString());
+					if (kn->id == 7 && alpha > 0.2)
+					{
+						print(FString::FromInt(Sample.MyActor->id));
+						print((dir * Sample.MyActor->strength * alpha / l * mult).ToString());
+					}
 				}
+				
 				kn->velocity += dir * Sample.MyActor->strength * alpha / l * mult;
 			}
 		}
