@@ -42,7 +42,13 @@ void AKnowledgeGraph::GenerateConnectedGraph(int32 NumClusters, int32 NodesPerCl
 
 	// Create Cluster Centers
 	for (int32 i = 0; i < NumClusters; ++i) {
-		FVector Location = FVector(i * 100.0f, 0, 0); // Staggered positioning
+
+		
+		FVector Location = FVector(
+			0,
+			0,
+			0
+			); 
 		AKnowledgeNode* Node = GetWorld()->SpawnActor<AKnowledgeNode>(AKnowledgeNode::StaticClass(), Location, FRotator::ZeroRotator);
 		int32 nodeId = i;  // Assign node ID, assumed incremented or derived
 		AddNode(nodeId, Node, Location);
@@ -55,8 +61,28 @@ void AKnowledgeGraph::GenerateConnectedGraph(int32 NumClusters, int32 NodesPerCl
 			FVector Location = FVector(i * 100.0f, j * 50.0f, 0); // Organize per cluster
 			AKnowledgeNode* Node = GetWorld()->SpawnActor<AKnowledgeNode>(AKnowledgeNode::StaticClass(), Location, FRotator::ZeroRotator);
 			int32 nodeId = i * NodesPerCluster + j;  // Calculate unique node ID
+
+
 			AddNode(nodeId, Node, Location);
-			AddEdge(nodeId, ClusterCenterIDs[i], nodeId); // Use node IDs for connection
+
+			if (1)
+			{
+				AddEdge(nodeId,
+				        ClusterCenterIDs[i],
+				        nodeId
+				); // Use node IDs for connection
+			}
+			else
+			{
+
+				
+				
+				AddEdge(nodeId,
+				nodeId,
+
+					ClusterCenterIDs[i]
+			); // Use node IDs for connection
+			}
 		}
 	}
 
@@ -79,7 +105,7 @@ void AKnowledgeGraph::BeginPlay()
 
 	InitOctree(FBox(FVector(-200, -200, -200), FVector(200, 200, 200)));
 
-	if (0)
+	if (1)
 	{
 		//json crap
 		const FString JsonFilePath = FPaths::ProjectContentDir() + "/data/graph.json";
@@ -159,7 +185,7 @@ void AKnowledgeGraph::BeginPlay()
 		}
 		else
 		{
-			GenerateConnectedGraph(10, 20);
+			GenerateConnectedGraph(3, 10);
 		}
 	}
 
@@ -338,7 +364,7 @@ void AKnowledgeGraph::ApplyForces()
 		}
 
 		float l = new_v.Size();
-		UE_LOG(LogTemp, Warning, TEXT("!!!link.Value->distance: %f"), link.Value->distance);
+		// UE_LOG(LogTemp, Warning, TEXT("!!!link.Value->distance: %f"), link.Value->distance);
 
 
 		// By looking at the javascript code, we can see strength Will only be computed when there is a change to the graph.
