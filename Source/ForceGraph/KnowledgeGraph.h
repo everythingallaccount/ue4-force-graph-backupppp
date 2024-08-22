@@ -135,7 +135,12 @@ public:
 	float distancemax = 10000;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Attributes)
 	float theta2 = 0.81;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Attributes)
+	float tick_interval = 0.1f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Attributes)
+	int jnodes1 = 200;
 
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
