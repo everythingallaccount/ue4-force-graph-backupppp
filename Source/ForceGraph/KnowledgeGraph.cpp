@@ -35,7 +35,7 @@ void AKnowledgeGraph::BeginPlay()
 
 
 	UE_LOG(LogTemp, Warning, TEXT("Begin play called, Restricting tick interval"));
-	PrimaryActorTick.TickInterval = 0.5f;
+	PrimaryActorTick.TickInterval = 0.1f;
 
 
 	InitOctree(FBox(FVector(-200, -200, -200), FVector(200, 200, 200)));
@@ -264,7 +264,7 @@ void AKnowledgeGraph::ApplyForces()
 
 
 
-		if (0)
+		if (1)
 		{
 			target_node->velocity -= new_v * (1 - link.Value->bias);
 			
@@ -281,31 +281,33 @@ void AKnowledgeGraph::ApplyForces()
 		// 	print("LINK VEL: " + (new_v * (1 - link.Value->bias)).ToString());
 	}
 
-
-	//charge forces
-	octree_node_strengths.Empty();
-	for (auto& node : all_nodes)
+	if (1)
 	{
-		int key = node.Key;
-		auto kn = node.Value;
+		//charge forces
+		octree_node_strengths.Empty();
+		for (auto& node : all_nodes)
+		{
+			int key = node.Key;
+			auto kn = node.Value;
 
 
-		// Because the actor location hasn't changed when we compute the link force, so These two lines could actually be put in the start of the function. 
+			// Because the actor location hasn't changed when we compute the link force, so These two lines could actually be put in the start of the function. 
 
-		// If they are remove here，then why we do AddOctreeElement(ote) in AddNode?
-		RemoveElement(node.Key); //need to remove then update with new location when adding
+			// If they are remove here，then why we do AddOctreeElement(ote) in AddNode?
+			RemoveElement(node.Key); //need to remove then update with new location when adding
 
-		AddNode(key, kn, kn->GetActorLocation());
-	}
-
-
-	// Most of the questions come from here。 
-	Accumulate();
+			AddNode(key, kn, kn->GetActorLocation());
+		}
 
 
-	for (auto& node : all_nodes)
-	{
-		ApplyManyBody(node.Value);
+		// Most of the questions come from here。 
+		Accumulate();
+
+
+		for (auto& node : all_nodes)
+		{
+			ApplyManyBody(node.Value);
+		}
 	}
 }
 
