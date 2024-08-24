@@ -32,7 +32,6 @@ AKnowledgeGraph::~AKnowledgeGraph()
 }
 
 
-
 void AKnowledgeGraph::GenerateConnectedGraph(int32 NumClusters, int32 NodesPerCluster)
 {
 	if (!GetWorld()) return;
@@ -41,26 +40,29 @@ void AKnowledgeGraph::GenerateConnectedGraph(int32 NumClusters, int32 NodesPerCl
 	ClusterCenterIDs.Reserve(NumClusters);
 
 	// Create Cluster Centers
-	for (int32 i = 0; i < NumClusters; ++i) {
-
-		
+	for (int32 i = 0; i < NumClusters; ++i)
+	{
 		FVector Location = FVector(
 			0,
 			0,
 			0
-			); 
-		AKnowledgeNode* Node = GetWorld()->SpawnActor<AKnowledgeNode>(AKnowledgeNode::StaticClass(), Location, FRotator::ZeroRotator);
-		int32 nodeId = i;  // Assign node ID, assumed incremented or derived
+		);
+		AKnowledgeNode* Node = GetWorld()->SpawnActor<AKnowledgeNode>(AKnowledgeNode::StaticClass(), Location,
+		                                                              FRotator::ZeroRotator);
+		int32 nodeId = i; // Assign node ID, assumed incremented or derived
 		AddNode(nodeId, Node, Location);
 		ClusterCenterIDs.Add(nodeId);
 	}
-    
+
 	// Connect Cluster Nodes
-	for (int32 i = 0; i < NumClusters; ++i) {
-		for (int32 j = 1; j < NodesPerCluster; ++j) {
+	for (int32 i = 0; i < NumClusters; ++i)
+	{
+		for (int32 j = 1; j < NodesPerCluster; ++j)
+		{
 			FVector Location = FVector(i * 100.0f, j * 50.0f, 0); // Organize per cluster
-			AKnowledgeNode* Node = GetWorld()->SpawnActor<AKnowledgeNode>(AKnowledgeNode::StaticClass(), Location, FRotator::ZeroRotator);
-			int32 nodeId = i * NodesPerCluster + j;  // Calculate unique node ID
+			AKnowledgeNode* Node = GetWorld()->SpawnActor<AKnowledgeNode>(
+				AKnowledgeNode::StaticClass(), Location, FRotator::ZeroRotator);
+			int32 nodeId = i * NodesPerCluster + j; // Calculate unique node ID
 
 
 			AddNode(nodeId, Node, Location);
@@ -74,24 +76,21 @@ void AKnowledgeGraph::GenerateConnectedGraph(int32 NumClusters, int32 NodesPerCl
 			}
 			else
 			{
-
-				
-				
 				AddEdge(nodeId,
-				nodeId,
+				        nodeId,
 
-					ClusterCenterIDs[i]
-			); // Use node IDs for connection
+				        ClusterCenterIDs[i]
+				); // Use node IDs for connection
 			}
 		}
 	}
 
 	// Inter-cluster Connections
-	for (int32 i = 0; i < NumClusters - 1; ++i) {
+	for (int32 i = 0; i < NumClusters - 1; ++i)
+	{
 		AddEdge(i, ClusterCenterIDs[i], ClusterCenterIDs[i + 1]); // Use node IDs to connect cluster centers
 	}
 }
-
 
 
 void AKnowledgeGraph::BeginPlay()
@@ -115,7 +114,7 @@ void AKnowledgeGraph::BeginPlay()
 
 		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
 		TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonString);
-	
+
 		if (FJsonSerializer::Deserialize(JsonReader, JsonObject) && JsonObject.IsValid())
 		{
 			//Retrieving an array property and printing each field
@@ -151,10 +150,9 @@ void AKnowledgeGraph::BeginPlay()
 		if (0)
 		{
 			//Retrieving an array property and printing each field
-			int jnodes =jnodes1 ;
+			int jnodes = jnodes1;
 			for (int32 i = 0; i < jnodes; i++)
 			{
-			
 				int jid = i;
 				AKnowledgeNode* kn = GetWorld()->SpawnActor<AKnowledgeNode>();
 				AddNode(jid, kn, FVector(0, 0, 0));
@@ -166,18 +164,21 @@ void AKnowledgeGraph::BeginPlay()
 			std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
 			std::uniform_int_distribution<> dis(0, jnodes - 1); // Random number distribution
 
-			for (int32 i = 0; i < jedges; i++) {
+			for (int32 i = 0; i < jedges; i++)
+			{
 				int jid = i;
-				int jsource = i % jnodes;           // Ensures jsource is always valid within the index range
-				int jtarget = (i + 1) % jnodes;     // Connect each node to the next node; wraps around
+				int jsource = i % jnodes; // Ensures jsource is always valid within the index range
+				int jtarget = (i + 1) % jnodes; // Connect each node to the next node; wraps around
 
 				AddEdge(jid, jsource, jtarget);
 
 				// Random additional edge to increase graph density
-				if (i < jnodes - 1) {
+				if (i < jnodes - 1)
+				{
 					int random_target = dis(gen);
 					// Ensure that we do not add self-loops
-					if (random_target != jsource) {
+					if (random_target != jsource)
+					{
 						AddEdge(jid + jnodes, jsource, random_target); // Use jid+jnodes to keep distinct edge IDs
 					}
 				}
@@ -290,12 +291,12 @@ void AKnowledgeGraph::InitForces()
 			all_nodes[link.Value->source]->numberOfConnected +
 			all_nodes[link.Value->target]->numberOfConnected
 		);
-		
+
 		if (0)
 		{
 			link.Value->bias = bias > 0.5 ? (1 - bias) * 0.5 + bias : bias * 0.5;
-
-		}else
+		}
+		else
 		{
 			link.Value->bias = bias;
 		}
@@ -372,16 +373,15 @@ void AKnowledgeGraph::ApplyForces()
 		new_v *= l;
 
 
-
 		if (1)
 		{
 			target_node->velocity -= new_v * (1 - link.Value->bias);
-			
-		}else
+		}
+		else
 		{
 			target_node->velocity -= new_v * (link.Value->bias);
 		}
-		
+
 		source_node->velocity += new_v * (link.Value->bias);
 
 		// if (target_node->id == 7 && alpha > 0.2)
@@ -569,7 +569,7 @@ void AKnowledgeGraph::FindManyBodyForce(
 					*node.GetChild(ChildRef),
 					CurrentContext.GetChildContext(ChildRef),
 					node_id + FString::FromInt(count)
-					);
+				);
 				count++;
 			}
 		}
@@ -599,7 +599,7 @@ void AKnowledgeGraph::FindManyBodyForce(
 						print((dir * Sample.MyActor->strength * alpha / l * mult).ToString());
 					}
 				}
-				
+
 				kn->velocity += dir * Sample.MyActor->strength * alpha / l * mult;
 			}
 		}
